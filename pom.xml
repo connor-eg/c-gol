@@ -60,7 +60,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.vanityblade.cgol/com.vanityblade.cgol.HelloApplication</mainClass>
+                            <mainClass>com.vanityblade.cgol/com.vanityblade.cgol.CGoLGame</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
