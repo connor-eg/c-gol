@@ -1,11 +1,15 @@
 package com.vanityblade.cgol;
 
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 public class GameBoard extends Canvas {
     private int rows;
     private int cols;
     private GameCell[][] board;
+    private Image cellSprite = null;
 
     public GameBoard() {
         this(80, 60);
@@ -15,14 +19,16 @@ public class GameBoard extends Canvas {
         super();
         this.rows = Math.max(1, rows);
         this.cols = Math.max(1, cols);
-        super.setHeight(cols * 13);
-        super.setWidth(rows * 13);
+        super.setHeight(cols * 16);
+        super.setWidth(rows * 16);
         board = new GameCell[rows][cols];
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 board[r][c] = new GameCell();
             }
         }
+        //cellSprite = new Image("CellStateSprites.png");
+        cellSprite = new Image("resources/com/vanityblade/cgol/ImageAssets/CellStateSprites.png");
     }
 
     //Render the current board
@@ -30,6 +36,17 @@ public class GameBoard extends Canvas {
         //TODO: render the current board
         //  This means that for each cell in the board, an image from CellStateSprites.png is rendered
         //   depending on the state of the cell and its neighbors.
+        if(cellSprite == null) throw new RuntimeException("Could not open cell state sprites");
+
+        //Clear the existing canvas
+        GraphicsContext g = getGraphicsContext2D();
+        g.setFill(Color.BLACK);
+        g.fill();
+        for(int x = 0; x < rows; x++){
+            for(int y = 0; y < cols; y++){
+
+            }
+        }
     }
 
     //Step forward in time, using the next board.
@@ -54,27 +71,13 @@ public class GameBoard extends Canvas {
                 GameCell cell = new GameCell(getCell(x,y));
                 //Set the next state of this cell
                 STATES state = switch (cell.getState()) {
-                    case UNFILLED, NO_GO, SOON_UNFILLED -> STATES.UNFILLED;
+                    case UNFILLED, SOON_UNFILLED -> STATES.UNFILLED;
                     case FILLED, PLACED, SOON_FILLED -> STATES.FILLED;
+                    /* NO_GO has to be handled separately because its state is not updated by the visual update,
+                     and can be either filled or not depending on neighbor count. */
+                    case NO_GO -> countNeighbors(x,y) == 3? STATES.FILLED: STATES.UNFILLED;
                 };
-                //4 cases for neighbors
-                NEIGHBORS neighbors;
-                STATES rightState = board[x+1][y].getState();
-                STATES downState = board[x][y+1].getState();
-                if(rightState == STATES.FILLED || rightState == STATES.SOON_UNFILLED || rightState == STATES.PLACED){
-                    neighbors = NEIGHBORS.RIGHT;
-                } else {
-                    neighbors = NEIGHBORS.NONE;
-                }
-                if(downState == STATES.FILLED || rightState == STATES.SOON_UNFILLED || rightState == STATES.PLACED){
-                    if(neighbors == NEIGHBORS.RIGHT) {
-                        neighbors = NEIGHBORS.BOTH;
-                    } else {
-                        neighbors = NEIGHBORS.DOWN;
-                    }
-                }
                 cell.setState(state);
-                cell.setNeighbors(neighbors);
                 newBoard[x][y] = cell;
             }
         }
@@ -82,13 +85,13 @@ public class GameBoard extends Canvas {
     }
 
     private GameCell[][] calcNextBoardVisuals() {
-        //TODO: This function will calculate the next "step" of the board's VISUAL CUES.
+        GameCell[][] newBoard = new GameCell[rows][cols];
         for (int x = 0; x < rows; x++) {
             for (int y = 0; y < cols; y++) {
-
+                newBoard[x][y] = calcNextCellVisual(x, y);
             }
         }
-        return null;
+        return newBoard;
     }
 
     //Calculate a cell with the next state for a given cell on the board
