@@ -4,16 +4,19 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 public class GameBoard extends Canvas {
     private final int rows;
     private final int cols;
     private GameCell[][] board;
 
-    public GameBoard() {
-        this(80, 60);
+    public GameBoard() throws FileNotFoundException {
+        this(20, 10);
     }
 
-    public GameBoard(int rows, int cols) {
+    public GameBoard(int rows, int cols) throws FileNotFoundException {
         super();
         this.rows = Math.max(1, rows);
         this.cols = Math.max(1, cols);
@@ -30,10 +33,11 @@ public class GameBoard extends Canvas {
     }
 
     //Render the current board
-    private void render() {
+    private void render() throws FileNotFoundException {
         //No need to clear the canvas because the entire canvas will be drawn over.
         GraphicsContext g = getGraphicsContext2D();
-        Image cellSprites = new Image("CellStateSprites.png");
+        FileInputStream fileInputStream = new FileInputStream("src/main/resources/ImageAssets/CellStateSprites.png");
+        Image cellSprites = new Image(fileInputStream);
         for(int x = 0; x < rows; x++){
             for(int y = 0; y < cols; y++){
                 g.drawImage(cellSprites, 16 * getCell(x,y).getState().ordinal(), 0, 16, 16, x*16, y*16, 16, 16);
@@ -42,14 +46,14 @@ public class GameBoard extends Canvas {
     }
 
     //Step forward in time, using the next board.
-    public void step() {
+    public void step() throws FileNotFoundException {
         board = updateBoard();
         render();
     }
 
     //Show the current board's state as well as how it will look in the next step.
     // Specifically, this does not step forward like step().
-    public void show(){
+    public void show() throws FileNotFoundException {
         board = calcNextBoardVisuals();
         render();
     }
@@ -132,7 +136,7 @@ public class GameBoard extends Canvas {
      * Negative values and overlarge values get wrapped (e.g. (-1, _) == (rows - 1, _))
      */
     public GameCell getCell(int x, int y) {
-        return board[(x % rows + rows) % rows][(y % cols + cols) & cols];
+        return board[(x % rows + rows) % rows][(y % cols + cols) % cols];
     }
 
 
