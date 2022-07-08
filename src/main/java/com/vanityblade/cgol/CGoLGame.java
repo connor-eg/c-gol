@@ -21,7 +21,7 @@ public class CGoLGame extends Application {
     Button showButton = new Button("show");
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         //Board initialization
         gameBoard = new GameBoard();
         bottomArea = new BorderPane();
