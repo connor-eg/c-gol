@@ -18,7 +18,6 @@ public class CGoLGame extends Application {
     HBox buttons;
     Button stepButton = new Button("step");
     Button randomizeButton = new Button("randomize");
-    Button showButton = new Button("show");
 
     @Override
     public void start(Stage stage) {
@@ -29,7 +28,7 @@ public class CGoLGame extends Application {
         root.setCenter(gameBoard); //The canvas is placed in the center of the game board
         root.setBottom(bottomArea); //The player's controls are down here
         /* Bottom area setup */
-        buttons = new HBox(stepButton,showButton, randomizeButton); //Represent some actions the player can take
+        buttons = new HBox(stepButton, randomizeButton); //Represent some actions the player can take
         bottomArea.setBottom(buttons); //Add the buttons to the bottom area
         buttons.setStyle("-fx-padding: 5px");
 
@@ -41,7 +40,6 @@ public class CGoLGame extends Application {
 
         /* Event handlers */
         stepButton.setOnAction(event -> gameBoard.step()); //Step button FIXME: replace with GO button that auto-steps
-        showButton.setOnAction(event -> gameBoard.show()); //Show the next step
         randomizeButton.setOnAction(event -> gameBoard.randomize()); //Randomize the board TODO: maybe keep this???
     }
 

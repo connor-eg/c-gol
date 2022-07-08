@@ -59,7 +59,7 @@ public class GameBoard extends Canvas {
     //Step forward in time, using the next board.
     public void step() {
         board = updateBoard();
-        render();
+        show();
     }
 
     //Show the current board's state as well as how it will look in the next step.
@@ -71,7 +71,6 @@ public class GameBoard extends Canvas {
 
     //Calculate the next board
     private GameCell[][] updateBoard() {
-        board = calcNextBoardVisuals();
         GameCell[][] newBoard = new GameCell[rows][cols];
         for (int x = 0; x < rows; x++) {
             for (int y = 0; y < cols; y++) {
