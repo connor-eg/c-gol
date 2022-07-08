@@ -22,7 +22,7 @@ public class CGoLGame extends Application {
     @Override
     public void start(Stage stage) {
         //Board initialization
-        gameBoard = new GameBoard();
+        gameBoard = new GameBoard(40, 40);
         bottomArea = new BorderPane();
         //TODO: create a top element that shows the remaining number of steps and empty square goal
         root.setCenter(gameBoard); //The canvas is placed in the center of the game board
@@ -30,7 +30,8 @@ public class CGoLGame extends Application {
         /* Bottom area setup */
         buttons = new HBox(stepButton, randomizeButton); //Represent some actions the player can take
         bottomArea.setBottom(buttons); //Add the buttons to the bottom area
-        buttons.setStyle("-fx-padding: 5px");
+        buttons.setStyle("-fx-padding: 6px");
+        buttons.setSpacing(4);
 
         //Scene initialization
         Scene scene = new Scene(root);
@@ -39,6 +40,7 @@ public class CGoLGame extends Application {
         stage.show();
 
         /* Event handlers */
+        //Button stuff
         stepButton.setOnAction(event -> gameBoard.step()); //Step button FIXME: replace with GO button that auto-steps
         randomizeButton.setOnAction(event -> gameBoard.randomize()); //Randomize the board TODO: maybe keep this???
     }

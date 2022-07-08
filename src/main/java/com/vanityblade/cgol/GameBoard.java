@@ -12,6 +12,8 @@ public class GameBoard extends Canvas {
     private final int rows;
     private final int cols;
     private GameCell[][] board;
+    private double mouseX = 0;
+    private double mouseY = 0;
 
     public GameBoard() {
         this(16, 16);
@@ -33,6 +35,14 @@ public class GameBoard extends Canvas {
         GraphicsContext g = getGraphicsContext2D();
         g.setFill(Color.BLACK);
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+        //Event handling initialization
+        setOnMouseMoved(event -> {
+            mouseX = event.getX();
+            mouseY = event.getY();
+        });
+        setOnMouseClicked(event -> handleClick());
+
         //Draw an initially empty board
         render();
     }
@@ -78,10 +88,9 @@ public class GameBoard extends Canvas {
                 //Set the next state of this cell
                 STATES state = switch (cell.getState()) {
                     case UNFILLED, SOON_UNFILLED -> STATES.UNFILLED;
-                    case FILLED, PLACED, SOON_FILLED -> STATES.FILLED;
-                    /* NO_GO has to be handled separately because its state is not updated by the visual update,
-                     and can be either filled or not depending on neighbor count. */
-                    case NO_GO -> countNeighbors(x, y) == 3 ? STATES.FILLED : STATES.UNFILLED;
+                    case FILLED, SOON_FILLED -> STATES.FILLED;
+                    //No-go and placed have to be updated separately because their states are ambiguous.
+                    case NO_GO, PLACED -> countNeighbors(x, y) == 2 || countNeighbors(x, y) == 3 ? STATES.FILLED : STATES.UNFILLED;
                 };
                 cell.setState(state);
                 newBoard[x][y] = cell;
@@ -149,7 +158,20 @@ public class GameBoard extends Canvas {
         return board[(x % rows + rows) % rows][(y % cols + cols) % cols];
     }
 
+    //On-click handler
+    public void handleClick() {
+        int cellX = (int)(mouseX - 4) / 16;
+        int cellY = (int)(mouseY - 4) / 16;
+        GameCell target = getCell(cellX, cellY);
+        target.setState(switch(target.getState()){
+            case UNFILLED, SOON_FILLED -> STATES.PLACED;
+            case FILLED, PLACED, SOON_UNFILLED -> STATES.UNFILLED;
+            case NO_GO -> STATES.NO_GO;
+        });
+        show();
+    }
 
+    //Randomizes the board layout
     public void randomize() {
         for (int x = 0; x < rows; x++) {
             for (int y = 0; y < cols; y++) {
@@ -162,5 +184,21 @@ public class GameBoard extends Canvas {
             }
         }
         show();
+    }
+
+    public double getMouseX() {
+        return mouseX;
+    }
+
+    public void setMouseX(double mouseX) {
+        this.mouseX = mouseX;
+    }
+
+    public double getMouseY() {
+        return mouseY;
+    }
+
+    public void setMouseY(double mouseY) {
+        this.mouseY = mouseY;
     }
 }
