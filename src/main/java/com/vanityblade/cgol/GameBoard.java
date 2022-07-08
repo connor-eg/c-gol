@@ -3,13 +3,11 @@ package com.vanityblade.cgol;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 
 public class GameBoard extends Canvas {
-    private int rows;
-    private int cols;
+    private final int rows;
+    private final int cols;
     private GameCell[][] board;
-    private Image cellSprite = null;
 
     public GameBoard() {
         this(80, 60);
@@ -27,31 +25,24 @@ public class GameBoard extends Canvas {
                 board[r][c] = new GameCell();
             }
         }
-        //cellSprite = new Image("CellStateSprites.png");
-        cellSprite = new Image("resources/com/vanityblade/cgol/ImageAssets/CellStateSprites.png");
+        //Draw an initially empty board
+        render();
     }
 
     //Render the current board
     private void render() {
-        //TODO: render the current board
-        //  This means that for each cell in the board, an image from CellStateSprites.png is rendered
-        //   depending on the state of the cell and its neighbors.
-        if(cellSprite == null) throw new RuntimeException("Could not open cell state sprites");
-
-        //Clear the existing canvas
+        //No need to clear the canvas because the entire canvas will be drawn over.
         GraphicsContext g = getGraphicsContext2D();
-        g.setFill(Color.BLACK);
-        g.fill();
+        Image cellSprites = new Image("CellStateSprites.png");
         for(int x = 0; x < rows; x++){
             for(int y = 0; y < cols; y++){
-
+                g.drawImage(cellSprites, 16 * getCell(x,y).getState().ordinal(), 0, 16, 16, x*16, y*16, 16, 16);
             }
         }
     }
 
     //Step forward in time, using the next board.
     public void step() {
-        board = calcNextBoardVisuals(); //updateBoard() requires calcNextBoardVisuals().
         board = updateBoard();
         render();
     }
@@ -65,6 +56,7 @@ public class GameBoard extends Canvas {
 
     //Calculate the next board
     private GameCell[][] updateBoard() {
+        calcNextBoardVisuals();
         GameCell[][] newBoard = new GameCell[rows][cols];
         for (int x = 0; x < rows; x++) {
             for (int y = 0; y < cols; y++) {
