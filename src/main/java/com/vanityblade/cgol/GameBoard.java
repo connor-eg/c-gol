@@ -3,6 +3,7 @@ package com.vanityblade.cgol;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,66 +13,76 @@ public class GameBoard extends Canvas {
     private final int cols;
     private GameCell[][] board;
 
-    public GameBoard() throws FileNotFoundException {
-        this(20, 10);
+    public GameBoard() {
+        this(16, 16);
     }
 
-    public GameBoard(int rows, int cols) throws FileNotFoundException {
+    public GameBoard(int rows, int cols) {
         super();
         this.rows = Math.max(1, rows);
         this.cols = Math.max(1, cols);
-        super.setHeight(cols * 16);
-        super.setWidth(rows * 16);
+        super.setHeight(cols * 16 + 8);
+        super.setWidth(rows * 16 + 8);
         board = new GameCell[rows][cols];
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 board[r][c] = new GameCell();
             }
         }
+        //Fill so that the outer edges are black
+        GraphicsContext g = getGraphicsContext2D();
+        g.setFill(Color.BLACK);
+        g.fillRect(0, 0, this.getWidth(), this.getHeight());
         //Draw an initially empty board
         render();
     }
 
     //Render the current board
-    private void render() throws FileNotFoundException {
+    private void render() {
         //No need to clear the canvas because the entire canvas will be drawn over.
         GraphicsContext g = getGraphicsContext2D();
-        FileInputStream fileInputStream = new FileInputStream("src/main/resources/ImageAssets/CellStateSprites.png");
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = new FileInputStream("src/main/resources/ImageAssets/CellStateSprites.png");
+        } catch (FileNotFoundException e) {
+            fileInputStream = null;
+        }
+        assert fileInputStream != null;
         Image cellSprites = new Image(fileInputStream);
-        for(int x = 0; x < rows; x++){
-            for(int y = 0; y < cols; y++){
-                g.drawImage(cellSprites, 16 * getCell(x,y).getState().ordinal(), 0, 16, 16, x*16, y*16, 16, 16);
+        for (int x = 0; x < rows; x++) {
+            for (int y = 0; y < cols; y++) {
+                g.drawImage(cellSprites, 16 * getCell(x, y).getState().ordinal(), 0, 16, 16, x * 16 + 4, y * 16 + 4, 16, 16);
             }
         }
     }
 
     //Step forward in time, using the next board.
-    public void step() throws FileNotFoundException {
+    public void step() {
         board = updateBoard();
         render();
     }
 
     //Show the current board's state as well as how it will look in the next step.
     // Specifically, this does not step forward like step().
-    public void show() throws FileNotFoundException {
+    public void show() {
         board = calcNextBoardVisuals();
         render();
     }
 
     //Calculate the next board
     private GameCell[][] updateBoard() {
-        calcNextBoardVisuals();
+        board = calcNextBoardVisuals();
         GameCell[][] newBoard = new GameCell[rows][cols];
         for (int x = 0; x < rows; x++) {
             for (int y = 0; y < cols; y++) {
-                GameCell cell = new GameCell(getCell(x,y));
+                GameCell cell = new GameCell(getCell(x, y));
                 //Set the next state of this cell
                 STATES state = switch (cell.getState()) {
                     case UNFILLED, SOON_UNFILLED -> STATES.UNFILLED;
                     case FILLED, PLACED, SOON_FILLED -> STATES.FILLED;
                     /* NO_GO has to be handled separately because its state is not updated by the visual update,
                      and can be either filled or not depending on neighbor count. */
-                    case NO_GO -> countNeighbors(x,y) == 3? STATES.FILLED: STATES.UNFILLED;
+                    case NO_GO -> countNeighbors(x, y) == 3 ? STATES.FILLED : STATES.UNFILLED;
                 };
                 cell.setState(state);
                 newBoard[x][y] = cell;
@@ -140,4 +151,17 @@ public class GameBoard extends Canvas {
     }
 
 
+    public void randomize() {
+        for (int x = 0; x < rows; x++) {
+            for (int y = 0; y < cols; y++) {
+                int rand = (int) (Math.random() * 2);
+                if (rand == 0) {
+                    getCell(x, y).setState(STATES.UNFILLED);
+                } else {
+                    getCell(x, y).setState(STATES.FILLED);
+                }
+            }
+        }
+        show();
+    }
 }
