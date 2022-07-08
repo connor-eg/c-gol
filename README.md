@@ -7,11 +7,11 @@ How it works:
   - Your objective is to place your cells such that after a number of simulation steps the number of filled cells is less than some threshold.
 
 Completed so far:
-  - Some game logic to handle game state transitions.
+  - Game logic to handle state transitions
+  - Rendering logic (I think, anyway)
 
 To-do (roughly in order from top to bottom):
-  - Finish the update board logic
-  - Add rendering logic
+  - Display the game window
   - Enable player interaction
   - Create save states (so players can make boards and play on them)
   - Add game modes (unsure exactly what this means yet; distant to-do goal)
