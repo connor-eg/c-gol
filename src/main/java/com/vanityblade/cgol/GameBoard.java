@@ -14,6 +14,7 @@ public class GameBoard extends Canvas {
     private GameCell[][] board;
     private double mouseX = 0;
     private double mouseY = 0;
+    private int generationsLeft = 0;
 
     public GameBoard() {
         this(16, 16);
@@ -23,8 +24,8 @@ public class GameBoard extends Canvas {
         super();
         this.rows = Math.max(1, rows);
         this.cols = Math.max(1, cols);
-        super.setHeight(cols * 16 + 8);
-        super.setWidth(rows * 16 + 8);
+        super.setHeight(cols * 16 + 2);
+        super.setWidth(rows * 16 + 2);
         board = new GameCell[rows][cols];
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
@@ -53,7 +54,7 @@ public class GameBoard extends Canvas {
         GraphicsContext g = getGraphicsContext2D();
         FileInputStream fileInputStream;
         try {
-            fileInputStream = new FileInputStream("src/main/resources/ImageAssets/CellStateSprites.png");
+            fileInputStream = new FileInputStream("src/main/resources/ImageAssets/cgol_cellsprites.png");
         } catch (FileNotFoundException e) {
             fileInputStream = null;
         }
@@ -61,7 +62,7 @@ public class GameBoard extends Canvas {
         Image cellSprites = new Image(fileInputStream);
         for (int x = 0; x < rows; x++) {
             for (int y = 0; y < cols; y++) {
-                g.drawImage(cellSprites, 16 * getCell(x, y).getState().ordinal(), 0, 16, 16, x * 16 + 4, y * 16 + 4, 16, 16);
+                g.drawImage(cellSprites, 16 * getCell(x, y).getState().ordinal(), 0, 16, 16, x * 16 + 1, y * 16 + 1, 16, 16);
             }
         }
     }
@@ -69,6 +70,7 @@ public class GameBoard extends Canvas {
     //Step forward in time, using the next board.
     public void step() {
         board = updateBoard();
+        if (generationsLeft > 0) generationsLeft--;
         show();
     }
 
@@ -160,13 +162,13 @@ public class GameBoard extends Canvas {
 
     //On-click handler
     public void handleClick() {
-        int cellX = (int)(mouseX - 4) / 16;
-        int cellY = (int)(mouseY - 4) / 16;
+        int cellX = (int)(mouseX - 1) / 16;
+        int cellY = (int)(mouseY - 1) / 16;
         GameCell target = getCell(cellX, cellY);
         target.setState(switch(target.getState()){
             case UNFILLED, SOON_FILLED -> STATES.PLACED;
             case FILLED, PLACED, SOON_UNFILLED -> STATES.UNFILLED;
-            case NO_GO -> STATES.NO_GO;
+            case NO_GO -> STATES.NO_GO; //These squares block players from placing a cell
         });
         show();
     }
@@ -175,11 +177,11 @@ public class GameBoard extends Canvas {
     public void randomize() {
         for (int x = 0; x < rows; x++) {
             for (int y = 0; y < cols; y++) {
-                int rand = (int) (Math.random() * 2);
+                int rand = (int) (Math.random() * 5); //20% of the board is filled on average
                 if (rand == 0) {
-                    getCell(x, y).setState(STATES.UNFILLED);
-                } else {
                     getCell(x, y).setState(STATES.FILLED);
+                } else {
+                    getCell(x, y).setState(STATES.UNFILLED);
                 }
             }
         }

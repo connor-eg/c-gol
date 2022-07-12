@@ -7,26 +7,29 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 public class CGoLGame extends Application {
-    //Large-scale layout
-    BorderPane root = new BorderPane();
+    //Layout
+    BorderPane gameRoot = new BorderPane(); //The game window is arranged in this
+    //Big picture layout
     GameBoard gameBoard;
-    BorderPane bottomArea;
+    BorderPane bottomArea; //Contains things besides the game area that the user can interact with
+    GameInfoBar gameInfoBar;
     //Bottom area layout
-    HBox buttons;
+    HBox buttons; //These buttons are generally for testing and should be replaced with something better.
     Button stepButton = new Button("step");
     Button randomizeButton = new Button("randomize");
+    //Top area layout
 
     @Override
     public void start(Stage stage) {
         //Board initialization
-        gameBoard = new GameBoard(40, 40);
+        gameBoard = new GameBoard();
         bottomArea = new BorderPane();
+        gameInfoBar = new GameInfoBar(gameBoard.getWidth());
         //TODO: create a top element that shows the remaining number of steps and empty square goal
-        root.setCenter(gameBoard); //The canvas is placed in the center of the game board
-        root.setBottom(bottomArea); //The player's controls are down here
+        gameRoot.setTop(gameInfoBar); //The game info (generations left/target cells) is placed at the top
+        gameRoot.setCenter(gameBoard); //The canvas is placed in the center of the game board
+        gameRoot.setBottom(bottomArea); //The player's controls are down here
         /* Bottom area setup */
         buttons = new HBox(stepButton, randomizeButton); //Represent some actions the player can take
         bottomArea.setBottom(buttons); //Add the buttons to the bottom area
@@ -34,7 +37,7 @@ public class CGoLGame extends Application {
         buttons.setSpacing(4);
 
         //Scene initialization
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(gameRoot);
         stage.setTitle("C-GoL: The Competitive Game of Life!");
         stage.setScene(scene);
         stage.show();
