@@ -10,7 +10,7 @@ import java.io.FileNotFoundException;
 public class GameInfoBar extends Canvas {
     public GameInfoBar(double width) {
         setHeight(32);
-        setWidth(width);
+        setWidth(width); //TODO: Change to Math.max(width, MINIMUM_WIDTH) to prevent text overlap
         drawBG();
     }
 

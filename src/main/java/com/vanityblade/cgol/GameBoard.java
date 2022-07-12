@@ -15,6 +15,8 @@ public class GameBoard extends Canvas {
     private double mouseX = 0;
     private double mouseY = 0;
     private int generationsLeft = 0;
+    private CLICK_PLACEMENT_MODE clickPlacementMode = CLICK_PLACEMENT_MODE.UNRESTRICTED;
+    public enum CLICK_PLACEMENT_MODE {UNRESTRICTED, RESTRICTED, DISABLE}
 
     public GameBoard() {
         this(16, 16);
@@ -160,15 +162,23 @@ public class GameBoard extends Canvas {
         return board[(x % rows + rows) % rows][(y % cols + cols) % cols];
     }
 
-    //On-click handler
+    //On-click handler; this messes with the state of the blocks on the canvas
     public void handleClick() {
+        if(clickPlacementMode == CLICK_PLACEMENT_MODE.DISABLE) return; //If user interaction is disabled, do nothing
         int cellX = (int)(mouseX - 1) / 16;
         int cellY = (int)(mouseY - 1) / 16;
-        GameCell target = getCell(cellX, cellY);
+        GameCell target = getCell(cellX, cellY); //The target is the cell that is about to be modified
+        /*
+         * In unrestricted placement mode, the user can fill no-go cells and empty a filled cell.
+         * In restricted placement mode, the user cannot alter filled or no-go cells.
+         */
         target.setState(switch(target.getState()){
-            case UNFILLED, SOON_FILLED -> STATES.PLACED;
-            case FILLED, PLACED, SOON_UNFILLED -> STATES.UNFILLED;
-            case NO_GO -> STATES.NO_GO; //These squares block players from placing a cell
+            case UNFILLED, SOON_FILLED -> STATES.PLACED; //Empty squares are replaced with filled squares
+            case PLACED -> STATES.UNFILLED; //Placed squares can always be unfilled
+            case NO_GO -> //These squares block players from placing a cell (while in restricted placement)
+                    clickPlacementMode == CLICK_PLACEMENT_MODE.UNRESTRICTED ? STATES.FILLED : STATES.NO_GO;
+            case FILLED, SOON_UNFILLED -> //These squares are considered "filled" and follow placement rules
+                    clickPlacementMode == CLICK_PLACEMENT_MODE.UNRESTRICTED ? STATES.UNFILLED : STATES.FILLED;
         });
         show();
     }

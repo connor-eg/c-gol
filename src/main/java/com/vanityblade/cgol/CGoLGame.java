@@ -26,7 +26,6 @@ public class CGoLGame extends Application {
         gameBoard = new GameBoard();
         bottomArea = new BorderPane();
         gameInfoBar = new GameInfoBar(gameBoard.getWidth());
-        //TODO: create a top element that shows the remaining number of steps and empty square goal
         gameRoot.setTop(gameInfoBar); //The game info (generations left/target cells) is placed at the top
         gameRoot.setCenter(gameBoard); //The canvas is placed in the center of the game board
         gameRoot.setBottom(bottomArea); //The player's controls are down here
