@@ -201,4 +201,7 @@ public class GameBoard extends Canvas {
     public CLICK_PLACEMENT_MODE getClickPlacementMode() {
         return clickPlacementMode;
     }
+    public void setClickPlacementMode(CLICK_PLACEMENT_MODE c) {
+        clickPlacementMode = c;
+    }
 }

@@ -1,6 +1,5 @@
 package com.vanityblade.cgol;
 
-import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -64,16 +63,18 @@ public class CGoLGame extends Application {
         /* Event handlers */
         //Button stuff
         stepButton.setOnAction(event -> gameBoard.step()); //Step button
-        randomizeButton.setOnAction(event -> gameBoard.randomize()); //Randomize the board TODO: maybe keep this???
+        randomizeButton.setOnAction(event -> gameBoard.randomize()); //Randomize the board
         animatorButton.setOnAction(event -> {
             if(ref.autoMode) { //Turning off the auto runner
                 animatorButton.setText("Go!");
                 ref.autoMode = false;
                 animationTimer.stop();
+                gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.UNRESTRICTED);
             } else {
                 animatorButton.setText("Stop!");
                 ref.autoMode = true;
                 animationTimer.start();
+                gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.DISABLE);
             }
         });
     }

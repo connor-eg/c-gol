@@ -8,8 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class GameInfoBar extends Canvas {
-    private int num;
-
     public GameInfoBar(double width) {
         setHeight(32);
         setWidth(width); //TODO: Change to Math.max(width, MINIMUM_WIDTH) to prevent text overlap
