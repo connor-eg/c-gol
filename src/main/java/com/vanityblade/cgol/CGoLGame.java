@@ -79,8 +79,8 @@ public class CGoLGame extends Application {
             }
         });
         gameRoot.setOnScroll(scrollEvent -> {
-            gameInfoBar.setTimeLeft((int) scrollEvent.getDeltaY());
-            gameInfoBar.setTargetCellsLeft((int) scrollEvent.getDeltaY());
+            gameInfoBar.setTimeLeft((int) scrollEvent.getDeltaY() + gameInfoBar.getTimeLeft());
+            gameInfoBar.setTargetCellsLeft((int) scrollEvent.getDeltaY() + gameInfoBar.getTargetCellsLeft());
         });
     }
 
