@@ -50,10 +50,11 @@ public class CGoLGame extends Application {
         //Animator
         AnimationTimer animationTimer = new AnimationTimer() {
             private long lastTime = 0;
+
             @Override
             public void handle(long l) {
                 long timeSinceLastUpdate = l - lastTime;
-                if(timeSinceLastUpdate > 330000000L){
+                if (timeSinceLastUpdate > 330000000L) {
                     lastTime = l;
                     gameBoard.step();
                 }
@@ -65,7 +66,7 @@ public class CGoLGame extends Application {
         stepButton.setOnAction(event -> gameBoard.step()); //Step button
         randomizeButton.setOnAction(event -> gameBoard.randomize()); //Randomize the board
         animatorButton.setOnAction(event -> {
-            if(ref.autoMode) { //Turning off the auto runner
+            if (ref.autoMode) { //Turning off the auto runner
                 animatorButton.setText("Go!");
                 ref.autoMode = false;
                 animationTimer.stop();
@@ -76,6 +77,10 @@ public class CGoLGame extends Application {
                 animationTimer.start();
                 gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.DISABLE);
             }
+        });
+        gameRoot.setOnScroll(scrollEvent -> {
+            gameInfoBar.setTimeLeft((int) scrollEvent.getDeltaY());
+            gameInfoBar.setTargetCellsLeft((int) scrollEvent.getDeltaY());
         });
     }
 

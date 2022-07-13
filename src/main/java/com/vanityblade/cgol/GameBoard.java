@@ -16,6 +16,7 @@ public class GameBoard extends Canvas {
     private double mouseY = 0;
     private int generationsLeft = 0;
     private CLICK_PLACEMENT_MODE clickPlacementMode = CLICK_PLACEMENT_MODE.UNRESTRICTED;
+
     public enum CLICK_PLACEMENT_MODE {UNRESTRICTED, RESTRICTED, DISABLE}
 
     public GameBoard() {
@@ -94,7 +95,8 @@ public class GameBoard extends Canvas {
                     case UNFILLED, SOON_UNFILLED -> STATES.UNFILLED;
                     case FILLED, SOON_FILLED -> STATES.FILLED;
                     //No-go and placed have to be updated separately because their states are ambiguous.
-                    case NO_GO, PLACED -> countNeighbors(x, y) == 2 || countNeighbors(x, y) == 3 ? STATES.FILLED : STATES.UNFILLED;
+                    case NO_GO, PLACED ->
+                            countNeighbors(x, y) == 2 || countNeighbors(x, y) == 3 ? STATES.FILLED : STATES.UNFILLED;
                 };
                 cell.setState(state);
                 newBoard[x][y] = cell;
@@ -164,15 +166,15 @@ public class GameBoard extends Canvas {
 
     //On-click handler; this messes with the state of the blocks on the canvas
     public void handleClick() {
-        if(clickPlacementMode == CLICK_PLACEMENT_MODE.DISABLE) return; //If user interaction is disabled, do nothing
-        int cellX = (int)(mouseX - 1) / 16;
-        int cellY = (int)(mouseY - 1) / 16;
+        if (clickPlacementMode == CLICK_PLACEMENT_MODE.DISABLE) return; //If user interaction is disabled, do nothing
+        int cellX = (int) (mouseX - 1) / 16;
+        int cellY = (int) (mouseY - 1) / 16;
         GameCell target = getCell(cellX, cellY); //The target is the cell that is about to be modified
         /*
          * In unrestricted placement mode, the user can fill no-go cells and empty a filled cell.
          * In restricted placement mode, the user cannot alter filled or no-go cells.
          */
-        target.setState(switch(target.getState()){
+        target.setState(switch (target.getState()) {
             case UNFILLED, SOON_FILLED -> STATES.PLACED; //Empty squares are replaced with filled squares
             case PLACED -> STATES.UNFILLED; //Placed squares can always be unfilled
             case NO_GO -> //These squares block players from placing a cell (while in restricted placement)
@@ -201,6 +203,7 @@ public class GameBoard extends Canvas {
     public CLICK_PLACEMENT_MODE getClickPlacementMode() {
         return clickPlacementMode;
     }
+
     public void setClickPlacementMode(CLICK_PLACEMENT_MODE c) {
         clickPlacementMode = c;
     }
