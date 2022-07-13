@@ -56,7 +56,7 @@ public class GameBoard extends Canvas {
         GraphicsContext g = getGraphicsContext2D();
         FileInputStream fileInputStream;
         try {
-            fileInputStream = new FileInputStream("src/main/resources/ImageAssets/cgol_cellsprites.png");
+            fileInputStream = new FileInputStream("src/main/resources/ImageAssets/cgol_cellSprites.png");
         } catch (FileNotFoundException e) {
             fileInputStream = null;
         }

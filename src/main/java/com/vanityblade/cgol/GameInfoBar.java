@@ -10,15 +10,15 @@ import java.io.FileNotFoundException;
 public class GameInfoBar extends Canvas {
     public GameInfoBar(double width) {
         setHeight(32);
-        setWidth(width); //TODO: Change to Math.max(width, MINIMUM_WIDTH) to prevent text overlap
+        setWidth(Math.max(width, 240));
         render();
     }
 
     //Renders the current state of the info bar
     public void render(){
         drawBG();
-        drawNumber(20, 123456);
-        drawNumber(-20, 7890);
+        drawNumber(16, 123456);
+        drawNumber(-16, (int)getWidth());
     }
 
     //This renders a background image and tiles it such that a continuous image is created.
@@ -33,8 +33,8 @@ public class GameInfoBar extends Canvas {
         assert fileInputStream != null;
         Image background = new Image(fileInputStream);
         g.drawImage(background, 0, 0, 16, 32, 0, 0, 16, 32); //Leftmost piece
-        for(int xpos = 16; xpos < getWidth() - 16; xpos += 16){
-            g.drawImage(background, 16, 0, 16, 32, xpos, 0, 16, 32); //Center bar
+        for(int i = 16; i < getWidth() - 16; i += 16){
+            g.drawImage(background, 16, 0, 16, 32, i, 0, 16, 32); //Center bar
         }
         g.drawImage(background, 32, 0, 16, 32, getWidth() - 16, 0, 16, 32); //Rightmost piece
     }
@@ -54,7 +54,7 @@ public class GameInfoBar extends Canvas {
         GraphicsContext g = getGraphicsContext2D();
         FileInputStream fileInputStream;
         try {
-            fileInputStream = new FileInputStream("src/main/resources/ImageAssets/cgol_numberfont.png");
+            fileInputStream = new FileInputStream("src/main/resources/ImageAssets/cgol_numberFont.png");
         } catch (FileNotFoundException e) {
             fileInputStream = null;
         }
