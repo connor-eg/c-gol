@@ -25,8 +25,8 @@ public class GameBoard extends Canvas {
 
     public GameBoard(int rows, int cols) {
         super();
-        this.rows = Math.max(1, rows);
-        this.cols = Math.max(1, cols);
+        this.rows = Math.max(3, rows);
+        this.cols = Math.max(3, cols);
         super.setHeight(cols * 16 + 2);
         super.setWidth(rows * 16 + 2);
         board = new GameCell[rows][cols];
