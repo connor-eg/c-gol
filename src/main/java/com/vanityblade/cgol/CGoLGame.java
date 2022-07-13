@@ -54,7 +54,7 @@ public class CGoLGame extends Application {
             @Override
             public void handle(long l) {
                 long timeSinceLastUpdate = l - lastTime;
-                if(timeSinceLastUpdate > 500000000L){
+                if(timeSinceLastUpdate > 330000000L){
                     lastTime = l;
                     gameBoard.step();
                 }
