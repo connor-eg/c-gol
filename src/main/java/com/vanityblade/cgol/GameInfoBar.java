@@ -8,6 +8,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class GameInfoBar extends Canvas {
+    private int timeLeft = 0;
+    private int targetCellsLeft = 0;
     public GameInfoBar(double width) {
         setHeight(32);
         setWidth(Math.max(width, 240));
@@ -17,8 +19,9 @@ public class GameInfoBar extends Canvas {
     //Renders the current state of the info bar
     public void render(){
         drawBG();
-        drawNumber(16, 123456);
-        drawNumber(-16, (int)getWidth());
+        drawIcons();
+        drawNumber(32, timeLeft);
+        drawNumber(-32, targetCellsLeft);
     }
 
     //This renders a background image and tiles it such that a continuous image is created.
@@ -37,6 +40,22 @@ public class GameInfoBar extends Canvas {
             g.drawImage(background, 16, 0, 16, 32, i, 0, 16, 32); //Center bar
         }
         g.drawImage(background, 32, 0, 16, 32, getWidth() - 16, 0, 16, 32); //Rightmost piece
+    }
+
+    private void drawIcons(){
+        GraphicsContext g = getGraphicsContext2D();
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = new FileInputStream("src/main/resources/ImageAssets/cgol_gameIcons.png");
+        } catch (FileNotFoundException e) {
+            fileInputStream = null;
+        }
+        assert  fileInputStream != null;
+        Image icons = new Image(fileInputStream);
+        //Left icon is a timer for the number of remaining generations
+        g.drawImage(icons, 0, 0, 32, 32, 0, 0, 32, 32);
+        //Right icon is a target for the number of remaining cells to be cleared
+        g.drawImage(icons, 32, 0, 32, 32, getWidth() - 33, 0, 32, 32);
     }
 
     /**
@@ -84,5 +103,21 @@ public class GameInfoBar extends Canvas {
             result /= 10;
         }
         return result % 10;
+    }
+
+    public int getTimeLeft() {
+        return timeLeft;
+    }
+
+    public void setTimeLeft(int timeLeft) {
+        this.timeLeft = timeLeft;
+    }
+
+    public int getTargetCellsLeft() {
+        return targetCellsLeft;
+    }
+
+    public void setTargetCellsLeft(int targetCellsLeft) {
+        this.targetCellsLeft = targetCellsLeft;
     }
 }
