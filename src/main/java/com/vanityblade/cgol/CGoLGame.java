@@ -63,7 +63,7 @@ public class CGoLGame extends Application {
 
         /* Event handlers */
         //Button stuff
-        stepButton.setOnAction(event -> gameBoard.step()); //Step button FIXME: replace with GO button that auto-steps
+        stepButton.setOnAction(event -> gameBoard.step()); //Step button
         randomizeButton.setOnAction(event -> gameBoard.randomize()); //Randomize the board TODO: maybe keep this???
         animatorButton.setOnAction(event -> {
             if(ref.autoMode) { //Turning off the auto runner
