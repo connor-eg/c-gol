@@ -19,7 +19,8 @@ public class GameInfoBar extends Canvas {
     //Renders the current state of the info bar
     public void render(){
         drawBG();
-        drawNumber(20, 8, 123456);
+        drawNumber(20, 123456);
+        drawNumber(-20, 7890);
     }
 
     //This renders a background image and tiles it such that a continuous image is created.
@@ -40,7 +41,18 @@ public class GameInfoBar extends Canvas {
         g.drawImage(background, 32, 0, 16, 32, getWidth() - 16, 0, 16, 32); //Rightmost piece
     }
 
-    private void drawNumber(double posX, double posY, int num){
+    /**
+     * This function draws a number in the top bar.
+     * @param posX This is the position of the number. If this is positive,
+     *             this value represents how many pixels away from the left side
+     *             of the bar the leftmost pixel of the leftmost digit will be placed.
+     *             If this is negative, this value is right-aligned instead.
+     * @param num This is the number to display.
+     */
+    private void drawNumber(double posX, int num){
+        if(posX < 0) {
+            posX = getWidth() + posX + 1 - (10 * countDigits(num));
+        }
         GraphicsContext g = getGraphicsContext2D();
         FileInputStream fileInputStream;
         try {
@@ -52,7 +64,7 @@ public class GameInfoBar extends Canvas {
         Image numbers = new Image(fileInputStream);
         for(int i = 0; i < countDigits(num); i++){
             int toDraw = digitAtPos(i, num);
-            g.drawImage(numbers, 8 * toDraw, 0, 8, 16, posX + 10 * i, posY, 8, 16);
+            g.drawImage(numbers, 8 * toDraw, 0, 8, 16, posX + 10 * i, 8, 8, 16);
         }
     }
 

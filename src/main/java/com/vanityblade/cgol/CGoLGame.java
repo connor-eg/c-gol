@@ -50,16 +50,11 @@ public class CGoLGame extends Application {
 
         //Animator
         AnimationTimer animationTimer = new AnimationTimer() {
-            private long timeSinceLastUpdate;
             private long lastTime = 0;
             @Override
             public void handle(long l) {
-                if(lastTime == 0) {
-                    lastTime = l;
-                    return;
-                }
-                timeSinceLastUpdate = l - lastTime;
-                if(timeSinceLastUpdate > 200000000L){
+                long timeSinceLastUpdate = l - lastTime;
+                if(timeSinceLastUpdate > 500000000L){
                     lastTime = l;
                     gameBoard.step();
                 }
