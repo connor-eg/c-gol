@@ -198,19 +198,7 @@ public class GameBoard extends Canvas {
         show();
     }
 
-    public double getMouseX() {
-        return mouseX;
-    }
-
-    public void setMouseX(double mouseX) {
-        this.mouseX = mouseX;
-    }
-
-    public double getMouseY() {
-        return mouseY;
-    }
-
-    public void setMouseY(double mouseY) {
-        this.mouseY = mouseY;
+    public CLICK_PLACEMENT_MODE getClickPlacementMode() {
+        return clickPlacementMode;
     }
 }
