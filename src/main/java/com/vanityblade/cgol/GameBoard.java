@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -49,6 +50,11 @@ public class GameBoard extends Canvas {
 
         //Draw an initially empty board
         render();
+    }
+
+    //Create a new GameBoard using information from a file
+    public GameBoard(File file){
+        this(20, 20);
     }
 
     //Render the current board

@@ -6,7 +6,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+
+import java.io.File;
 
 public class CGoLGame extends Application {
     //Layout
@@ -20,6 +24,7 @@ public class CGoLGame extends Application {
     Button stepButton = new Button("step");
     Button randomizeButton = new Button("randomize");
     Button animatorButton = new Button("Go!");
+    Button loadButton = new Button("load");
     //Top area layout
 
     @Override
@@ -32,7 +37,7 @@ public class CGoLGame extends Application {
         gameRoot.setCenter(gameBoard); //The canvas is placed in the center of the game board
         gameRoot.setBottom(bottomArea); //The player's controls are down here
         /* Bottom area setup */
-        buttons = new HBox(stepButton, randomizeButton, animatorButton); //Represent some actions the player can take
+        buttons = new HBox(stepButton, randomizeButton, animatorButton, loadButton); //Represent some actions the player can take
         bottomArea.setBottom(buttons); //Add the buttons to the bottom area
         buttons.setStyle("-fx-padding: 6px");
         buttons.setSpacing(4);
@@ -78,6 +83,24 @@ public class CGoLGame extends Application {
                 gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.DISABLE);
             }
         });
+        loadButton.setOnAction(event -> {
+            FileChooser fileChooser = new FileChooser();
+            File file = fileChooser.showOpenDialog(new Stage());
+            if(file == null) {
+                System.out.println("could not read file");
+                gameBoard = new GameBoard(40, 40);
+                gameInfoBar = new GameInfoBar(gameBoard.getWidth());
+                gameRoot.setCenter(gameBoard);
+                gameRoot.setTop(gameInfoBar);
+                stage.sizeToScene();
+            } else if (file.canRead()) {
+                gameBoard = new GameBoard(file);
+            } else {
+                gameBoard = new GameBoard(40, 40);
+            }
+        });
+
+        //TODO: Delete this, it's just a test of the number system
         gameRoot.setOnScroll(scrollEvent -> {
             gameInfoBar.setTimeLeft((int) scrollEvent.getDeltaY() + gameInfoBar.getTimeLeft());
             gameInfoBar.setTargetCellsLeft((int) scrollEvent.getDeltaY() + gameInfoBar.getTargetCellsLeft());
