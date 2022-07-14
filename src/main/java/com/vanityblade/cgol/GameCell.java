@@ -10,6 +10,9 @@ public class GameCell {
     public GameCell(GameCell toCopy) {
         this.state = toCopy.getState();
     }
+    public GameCell(STATES newState){
+        this.state = newState;
+    }
 
     //State getters/setters
     public STATES getState() {
