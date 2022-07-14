@@ -1,0 +1,31 @@
+A file for this game is created by placing several numbers in the correct order in the file, separated by line breaks
+The order for the numbers describing the game is this:
+
+ - Rows
+ - Columns
+ - Maximum number of generations
+ - Target number of cells
+
+After that, it is followed by a rectangle of numbers describing the game board.
+A 0 describes an unfilled cell, a 1 describes a filled cell, and a 2 describes a no-go cell.
+Cells in a given row are placed on the same line, with a line break between rows. Example:
+
+0010000
+0001000     <- This describes a 7x5 grid that contains a glider and zero no-go cells.
+0111000
+0000000
+0000000
+
+The full file for the above grid might look like this
+7
+5
+30
+3
+0010000
+0001000
+0111000
+0000000
+0000000
+
+In English: "A 7x5 grid, where the user tries to get the number of filled cells to 3 in at most 30 generations."
+Space below the last line of the board is not read by the program and may be used for comments.

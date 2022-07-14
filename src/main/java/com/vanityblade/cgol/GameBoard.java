@@ -5,9 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 
 public class GameBoard extends Canvas {
     private final int rows;
@@ -15,19 +13,22 @@ public class GameBoard extends Canvas {
     private GameCell[][] board;
     private double mouseX = 0;
     private double mouseY = 0;
-    private int generationsLeft = 0;
+    public final int maxGenerations;
+    public final int targetNumberCells;
     private CLICK_PLACEMENT_MODE clickPlacementMode = CLICK_PLACEMENT_MODE.UNRESTRICTED;
 
     public enum CLICK_PLACEMENT_MODE {UNRESTRICTED, RESTRICTED, DISABLE}
 
     public GameBoard() {
-        this(16, 16);
+        this(16, 16, -1, -1);
     }
 
-    public GameBoard(int rows, int cols) {
+    public GameBoard(int rows, int cols, int maxGenerations, int targetNumberCells) {
         super();
         this.rows = Math.max(3, rows);
         this.cols = Math.max(3, cols);
+        this.maxGenerations = maxGenerations;
+        this.targetNumberCells = targetNumberCells;
         super.setHeight(cols * 16 + 2);
         super.setWidth(rows * 16 + 2);
         board = new GameCell[rows][cols];
@@ -52,9 +53,60 @@ public class GameBoard extends Canvas {
         render();
     }
 
-    //Create a new GameBoard using information from a file
-    public GameBoard(File file){
-        this(20, 20);
+    /**
+     * Create a new GameBoard using information from a file
+     * Details for how a file is set up can be found in src/main/resources/FileResources
+     *
+     * @param file The file to be read; this does not perform checks for file correctness.
+     */
+    public GameBoard(File file) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            rows = Integer.parseInt(reader.readLine());
+            System.out.println(rows);
+            cols = Integer.parseInt(reader.readLine());
+            System.out.println(cols);
+            maxGenerations = Integer.parseInt(reader.readLine());
+            System.out.println(maxGenerations);
+            targetNumberCells = Integer.parseInt(reader.readLine());
+            System.out.println(targetNumberCells);
+            board = new GameCell[rows][cols];
+            for(int y = 0; y < cols; y++){
+                String currentRow = reader.readLine();
+                for(int x = 0; x < rows; x++){
+                    STATES newCellState = switch(Integer.parseInt(currentRow.substring(x,x+1))){
+                        case 0 -> STATES.UNFILLED;
+                        case 1 -> STATES.FILLED;
+                        default -> STATES.NO_GO;
+                    };
+                    board[x][y] = new GameCell(newCellState);
+                    System.out.print(currentRow.charAt(x));
+                }
+                System.out.println();
+            }
+            clickPlacementMode = CLICK_PLACEMENT_MODE.RESTRICTED;
+
+            super.setHeight(cols * 16 + 2);
+            super.setWidth(rows * 16 + 2);
+
+            //Drawing this board
+            GraphicsContext g = getGraphicsContext2D();
+            g.setFill(Color.BLACK);
+            g.fillRect(0, 0, this.getWidth(), this.getHeight()); //Outer rectangle
+
+            //Event handling initialization
+            setOnMouseMoved(event -> {
+                mouseX = event.getX();
+                mouseY = event.getY();
+            });
+            setOnMouseClicked(event -> handleClick());
+
+            //Draw the initial state of this board
+            show();
+        } catch (IOException e) {
+            System.out.println("Something went wrong.");
+            throw new RuntimeException(e);
+        }
     }
 
     //Render the current board
@@ -79,7 +131,6 @@ public class GameBoard extends Canvas {
     //Step forward in time, using the next board.
     public void step() {
         board = updateBoard();
-        if (generationsLeft > 0) generationsLeft--;
         show();
     }
 

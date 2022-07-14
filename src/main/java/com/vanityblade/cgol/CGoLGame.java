@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.DialogPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
@@ -50,6 +51,7 @@ public class CGoLGame extends Application {
         Scene scene = new Scene(gameRoot);
         stage.setTitle("C-GoL: The Competitive Game of Life!");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
 
         //Animator
@@ -85,19 +87,16 @@ public class CGoLGame extends Application {
         });
         loadButton.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialDirectory(new File("src/main/resources/FileResources"));
             File file = fileChooser.showOpenDialog(new Stage());
-            if(file == null) {
-                System.out.println("could not read file");
-                gameBoard = new GameBoard(40, 40);
-                gameInfoBar = new GameInfoBar(gameBoard.getWidth());
-                gameRoot.setCenter(gameBoard);
-                gameRoot.setTop(gameInfoBar);
-                stage.sizeToScene();
-            } else if (file.canRead()) {
-                gameBoard = new GameBoard(file);
-            } else {
-                gameBoard = new GameBoard(40, 40);
-            }
+
+            if(file == null) return; //If the user clicks cancel or the file has incorrect permissions nothing happens.
+
+            gameBoard = new GameBoard(file);
+            gameInfoBar = new GameInfoBar(gameBoard.getWidth());
+            gameRoot.setCenter(gameBoard);
+            gameRoot.setTop(gameInfoBar);
+            stage.sizeToScene();
         });
 
         //TODO: Delete this, it's just a test of the number system
