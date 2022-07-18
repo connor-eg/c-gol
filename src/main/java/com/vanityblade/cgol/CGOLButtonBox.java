@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 
 public class CGOLButtonBox extends Pane {
     public CGOLButton bStart, bStop, bLoad, bSave, bNew, bStep, bReset;
+    private boolean isStartVisible = true;
     public CGOLButtonBox(double width) {
         this.setWidth(width);
         this.setMinWidth(width);
@@ -44,13 +45,18 @@ public class CGOLButtonBox extends Pane {
 
     //Super garbage method for flipping which button is clickable at the moment, but it works perfectly.
     public void flipStartStop(){
-        if(bStart.getScaleX() == 1){
+        if(isStartVisible){
             bStart.setScaleX(0);
             bStop.setScaleX(1);
         } else {
             bStart.setScaleX(1);
             bStop.setScaleX(0);
         }
+        isStartVisible = !isStartVisible;
+    }
+
+    public boolean getStopVisible(){
+        return !isStartVisible;
     }
 
     public static class CGOLButton extends Canvas {

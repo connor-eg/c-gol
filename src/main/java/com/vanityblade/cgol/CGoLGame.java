@@ -76,6 +76,7 @@ public class CGoLGame extends Application {
             resetGameRootChildren();
             stage.sizeToScene();
             lastLoadedFile = file;
+            if(buttonContainer.getStopVisible()) buttonStopHelper(animationTimer); //Stops the animation from happening on level load.
         });
         buttonContainer.bReset.setOnMouseClicked(e -> {
             if (buttonContainer.bReset.isNotEnabled()) return;
@@ -87,28 +88,36 @@ public class CGoLGame extends Application {
             gameInfoBar = new GameInfoBar(gameBoard.getWidth());
             resetGameRootChildren();
             stage.sizeToScene();
+            if(buttonContainer.getStopVisible()) buttonStopHelper(animationTimer); //Stops the animation from happening on level load.
         });
         buttonContainer.bStart.setOnMouseClicked(e -> {
             if (buttonContainer.bStart.isNotEnabled()) return;
-            animationTimer.start();
-            gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.DISABLE);
-            buttonContainer.flipStartStop();
+            buttonStartHelper(animationTimer);
         });
         buttonContainer.bStop.setOnMouseClicked(e -> {
             if (buttonContainer.bStop.isNotEnabled()) return;
-            animationTimer.stop();
-            gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.UNRESTRICTED);
-            buttonContainer.flipStartStop();
+            buttonStopHelper(animationTimer);
         });
     }
+
+    private void buttonStopHelper(AnimationTimer animationTimer) {
+        animationTimer.stop();
+        gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.UNRESTRICTED);
+        buttonContainer.flipStartStop();
+    }
+
+    private void buttonStartHelper(AnimationTimer animationTimer) {
+        animationTimer.start();
+        gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.DISABLE);
+        buttonContainer.flipStartStop();
+    }
+
 
     //Required after creating a new instance of one of the contained views (i.e. after loading a new board)
     public void resetGameRootChildren() {
         gameRoot.getChildren().clear();
         gameRoot.getChildren().addAll(gameInfoBar, gameBoard, buttonContainer);
         buttonContainer.relocateButtons(Math.max(256, gameBoard.getWidth()));
-
-
     }
 
     public static void main(String[] args) {
