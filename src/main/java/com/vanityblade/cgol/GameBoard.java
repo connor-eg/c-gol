@@ -63,13 +63,9 @@ public class GameBoard extends Canvas {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             rows = Integer.parseInt(reader.readLine());
-            System.out.println(rows);
             cols = Integer.parseInt(reader.readLine());
-            System.out.println(cols);
             maxGenerations = Integer.parseInt(reader.readLine());
-            System.out.println(maxGenerations);
             targetNumberCells = Integer.parseInt(reader.readLine());
-            System.out.println(targetNumberCells);
             board = new GameCell[rows][cols];
             for(int y = 0; y < cols; y++){
                 String currentRow = reader.readLine();
@@ -80,9 +76,7 @@ public class GameBoard extends Canvas {
                         default -> STATES.NO_GO;
                     };
                     board[x][y] = new GameCell(newCellState);
-                    System.out.print(currentRow.charAt(x));
                 }
-                System.out.println();
             }
             clickPlacementMode = CLICK_PLACEMENT_MODE.RESTRICTED;
 
@@ -241,20 +235,12 @@ public class GameBoard extends Canvas {
         });
         show();
     }
+    public int getRows() {
+        return rows;
+    }
 
-    //Randomizes the board layout
-    public void randomize() {
-        for (int x = 0; x < rows; x++) {
-            for (int y = 0; y < cols; y++) {
-                int rand = (int) (Math.random() * 5); //20% of the board is filled on average
-                if (rand == 0) {
-                    getCell(x, y).setState(STATES.FILLED);
-                } else {
-                    getCell(x, y).setState(STATES.UNFILLED);
-                }
-            }
-        }
-        show();
+    public int getCols() {
+        return cols;
     }
 
     public CLICK_PLACEMENT_MODE getClickPlacementMode() {

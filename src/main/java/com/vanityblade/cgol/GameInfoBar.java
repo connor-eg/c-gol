@@ -13,7 +13,7 @@ public class GameInfoBar extends Canvas {
 
     public GameInfoBar(double width) {
         setHeight(32);
-        setWidth(Math.max(width, 240));
+        setWidth(Math.max(width, 256));
         render();
     }
 
