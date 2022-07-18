@@ -4,18 +4,17 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.DialogPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.io.File;
 
 public class CGoLGame extends Application {
     //Layout
-    BorderPane gameRoot = new BorderPane(); //The game window is arranged in this
+    VBox gameRoot = new VBox(); //The game window is arranged in this
     //Big picture layout
     GameBoard gameBoard;
     BorderPane bottomArea; //Contains things besides the game area that the user can interact with
@@ -34,9 +33,9 @@ public class CGoLGame extends Application {
         gameBoard = new GameBoard();
         bottomArea = new BorderPane();
         gameInfoBar = new GameInfoBar(gameBoard.getWidth());
-        gameRoot.setTop(gameInfoBar); //The game info (generations left/target cells) is placed at the top
-        gameRoot.setCenter(gameBoard); //The canvas is placed in the center of the game board
-        gameRoot.setBottom(bottomArea); //The player's controls are down here
+        gameRoot.setSpacing(0);
+        gameRoot.setStyle("-fx-background-color: #D1D1D1");
+        resetGameRootChildren();
         /* Bottom area setup */
         buttons = new HBox(stepButton, randomizeButton, animatorButton, loadButton); //Represent some actions the player can take
         bottomArea.setBottom(buttons); //Add the buttons to the bottom area
@@ -94,8 +93,7 @@ public class CGoLGame extends Application {
 
             gameBoard = new GameBoard(file);
             gameInfoBar = new GameInfoBar(gameBoard.getWidth());
-            gameRoot.setCenter(gameBoard);
-            gameRoot.setTop(gameInfoBar);
+            resetGameRootChildren();
             stage.sizeToScene();
         });
 
@@ -104,6 +102,12 @@ public class CGoLGame extends Application {
             gameInfoBar.setTimeLeft((int) scrollEvent.getDeltaY() + gameInfoBar.getTimeLeft());
             gameInfoBar.setTargetCellsLeft((int) scrollEvent.getDeltaY() + gameInfoBar.getTargetCellsLeft());
         });
+    }
+
+    //Required after creating a new instance of one of the contained views (i.e. after loading a new board)
+    public void resetGameRootChildren(){
+        gameRoot.getChildren().clear();
+        gameRoot.getChildren().addAll(gameInfoBar, gameBoard, bottomArea);
     }
 
     public static void main(String[] args) {
