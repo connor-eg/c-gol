@@ -2,6 +2,7 @@ package com.vanityblade.cgol;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
@@ -35,6 +36,7 @@ public class CGoLGame extends Application {
         gameInfoBar = new GameInfoBar(gameBoard.getWidth());
         gameRoot.setSpacing(0);
         gameRoot.setStyle("-fx-background-color: #D1D1D1");
+        gameRoot.setAlignment(Pos.CENTER);
         resetGameRootChildren();
         /* Bottom area setup */
         buttons = new HBox(stepButton, randomizeButton, animatorButton, loadButton); //Represent some actions the player can take
