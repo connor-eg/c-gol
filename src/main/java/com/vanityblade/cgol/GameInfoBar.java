@@ -8,12 +8,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class GameInfoBar extends Canvas {
-    private int timeLeft = 0;
-    private int targetCellsLeft = 0;
+    private int timeLeft;
+    private int targetCellsLeft;
 
-    public GameInfoBar(double width) {
+    public GameInfoBar(double width, int timeLeft, int targetCellsLeft) {
         setHeight(32);
         setWidth(Math.max(width, 256));
+        this.timeLeft = timeLeft;
+        this.targetCellsLeft = targetCellsLeft;
         render();
     }
 
@@ -21,8 +23,8 @@ public class GameInfoBar extends Canvas {
     public void render() {
         drawBG();
         drawIcons();
-        drawNumber(32, timeLeft);
-        drawNumber(-32, targetCellsLeft);
+        drawNumber(32, Math.max(0, timeLeft));
+        drawNumber(-32, Math.max(0, targetCellsLeft));
     }
 
     //This renders a background image and tiles it such that a continuous image is created.

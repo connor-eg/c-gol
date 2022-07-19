@@ -26,13 +26,12 @@ public class CGoLGame extends Application {
     public void start(Stage stage) {
         //Board initialization
         gameBoard = new GameBoard();
-        gameInfoBar = new GameInfoBar(gameBoard.getWidth());
+        gameInfoBar = new GameInfoBar(gameBoard.getWidth(), gameBoard.maxGenerations, gameBoard.targetNumberCells);
         gameRoot.setSpacing(0);
         gameRoot.setStyle("-fx-background-color: #D1D1D1");
         gameRoot.setAlignment(Pos.CENTER);
         /* Bottom area setup */
         buttonContainer = new CGOLButtonBox(Math.max(256, gameBoard.getWidth()));
-        System.out.println(gameBoard.getWidth());
 
         resetGameRootChildren();
 
@@ -72,7 +71,7 @@ public class CGoLGame extends Application {
             if (file == null) return; //If the user clicks cancel or the file has incorrect permissions nothing happens.
 
             gameBoard = new GameBoard(file);
-            gameInfoBar = new GameInfoBar(gameBoard.getWidth());
+            gameInfoBar = new GameInfoBar(gameBoard.getWidth(), gameBoard.maxGenerations, gameBoard.maxGenerations);
             resetGameRootChildren();
             stage.sizeToScene();
             lastLoadedFile = file;
@@ -85,7 +84,7 @@ public class CGoLGame extends Application {
             } else {
                 gameBoard = new GameBoard(lastLoadedFile);
             }
-            gameInfoBar = new GameInfoBar(gameBoard.getWidth());
+            gameInfoBar = new GameInfoBar(gameBoard.getWidth(), gameBoard.maxGenerations, gameBoard.targetNumberCells);
             resetGameRootChildren();
             stage.sizeToScene();
             if(buttonContainer.getStopVisible()) buttonStopHelper(animationTimer); //Stops the animation from happening on level load.
@@ -104,12 +103,14 @@ public class CGoLGame extends Application {
         animationTimer.stop();
         gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.UNRESTRICTED);
         buttonContainer.flipStartStop();
+        buttonContainer.bStep.setEnableState(true);
     }
 
     private void buttonStartHelper(AnimationTimer animationTimer) {
         animationTimer.start();
         gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.DISABLE);
         buttonContainer.flipStartStop();
+        buttonContainer.bStep.setEnableState(false);
     }
 
 

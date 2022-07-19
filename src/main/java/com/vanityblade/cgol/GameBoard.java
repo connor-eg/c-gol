@@ -205,6 +205,18 @@ public class GameBoard extends Canvas {
         return count;
     }
 
+    //Returns the number of cells in the board that are filled.
+    public int countNumFilledCells(){
+        int count = 0;
+        for(int x = 0; x < rows; x++){
+            for(int y = 0; y < cols; y++){
+                STATES temp = getCell(x,y).getState();
+                if(temp == STATES.FILLED || temp == STATES.SOON_UNFILLED || temp == STATES.PLACED) count++;
+            }
+        }
+        return count;
+    }
+
 
     /**
      * Returns a reference to the cell at the given position
