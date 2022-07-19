@@ -129,6 +129,9 @@ public class CGoLGame extends Application {
                 gameBoard.saveToFile(file, -1, -1);
             }
         });
+        buttonContainer.bNew.setOnMouseClicked(event -> {
+
+        });
     }
 
     private void buttonStopHelper() {

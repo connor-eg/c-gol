@@ -94,6 +94,7 @@ public class GameBoard extends Canvas {
                 mouseY = event.getY();
             });
             setOnMouseClicked(event -> handleClick());
+            reader.close();
 
             //Draw the initial state of this board
             show();
