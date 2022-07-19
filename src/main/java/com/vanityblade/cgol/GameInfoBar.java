@@ -22,22 +22,22 @@ public class GameInfoBar extends Canvas {
     //Renders the current state of the info bar
     public void render() {
         drawBG();
-        if(targetCellsLeft == -1 && timeLeft == -1){ //There is no objective, draw the CreateMode banner
+        if (targetCellsLeft == -1 && timeLeft == -1) { //There is no objective, draw the CreateMode banner
             drawInCenter("cgol_createModeBanner.png");
         } else { //There is an objective, don't draw the banner
             drawIcons();
             drawNumber(32, Math.max(0, timeLeft));
             drawNumber(-32, Math.max(0, targetCellsLeft));
             //Game-ending conditions
-            if(timeLeft == 0) {
-                if(targetCellsLeft <= 0){ //Win
-                    drawInCenter("cgol_winIcon.png");
-                } else { //Lose
-                    drawInCenter("cgol_loseIcon.png");
-                }
+            if (targetCellsLeft <= 0) { //User has won
+                drawInCenter("cgol_winIcon.png");
+            }
+            if (timeLeft == 0) { //User has lost
+                drawInCenter("cgol_loseIcon.png");
             }
         }
     }
+
 
     //This renders a background image and tiles it such that a continuous image is created.
     private void drawBG() {
@@ -73,7 +73,7 @@ public class GameInfoBar extends Canvas {
         g.drawImage(icons, 32, 0, 32, 32, getWidth() - 33, 0, 32, 32);
     }
 
-    private void drawInCenter(String filename){
+    private void drawInCenter(String filename) {
         GraphicsContext g = getGraphicsContext2D();
         FileInputStream fileInputStream;
         try {
@@ -83,7 +83,7 @@ public class GameInfoBar extends Canvas {
         }
         assert fileInputStream != null;
         Image img = new Image(fileInputStream);
-        g.drawImage(img, 0, 0, img.getWidth(), img.getHeight(), (getWidth() / 2) - (img.getWidth() / 2), img.getHeight()/2, img.getWidth(), img.getHeight());
+        g.drawImage(img, 0, 0, img.getWidth(), img.getHeight(), (getWidth() / 2) - (img.getWidth() / 2), img.getHeight() / 2, img.getWidth(), img.getHeight());
     }
 
     /**
@@ -98,7 +98,7 @@ public class GameInfoBar extends Canvas {
     private void drawNumber(double posX, int num) {
         if (posX < 0) {
             posX = getWidth() + posX + 1 - (10 * countDigits(num));
-            if(num < 0) posX -= 10;
+            if (num < 0) posX -= 10;
         }
         GraphicsContext g = getGraphicsContext2D();
         FileInputStream fileInputStream;
@@ -110,8 +110,8 @@ public class GameInfoBar extends Canvas {
         assert fileInputStream != null;
         Image numbers = new Image(fileInputStream);
         //Drawing a minus sign, if applicable
-        if(num < 0){
-            if(posX < 0){
+        if (num < 0) {
+            if (posX < 0) {
                 g.drawImage(numbers, 80, 0, 8, 16, posX - 10, 8, 8, 16);
             } else {
                 g.drawImage(numbers, 80, 0, 8, 16, posX, 8, 8, 16);

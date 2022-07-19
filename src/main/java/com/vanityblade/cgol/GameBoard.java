@@ -146,8 +146,10 @@ public class GameBoard extends Canvas {
                     case UNFILLED, SOON_UNFILLED -> STATES.UNFILLED;
                     case FILLED, SOON_FILLED -> STATES.FILLED;
                     //No-go and placed have to be updated separately because their states are ambiguous.
-                    case NO_GO, PLACED ->
+                    case PLACED ->
                             countNeighbors(x, y) == 2 || countNeighbors(x, y) == 3 ? STATES.FILLED : STATES.UNFILLED;
+                    case NO_GO ->
+                            countNeighbors(x, y) == 3 ? STATES.FILLED : STATES.UNFILLED;
                 };
                 cell.setState(state);
                 newBoard[x][y] = cell;

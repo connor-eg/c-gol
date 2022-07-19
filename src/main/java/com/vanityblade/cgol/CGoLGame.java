@@ -19,9 +19,9 @@ public class CGoLGame extends Application {
     //Bottom area layout
     CGOLButtonBox buttonContainer;
     File lastLoadedFile = null;
-
     //Top area layout
 
+    AnimationTimer animationTimer; //Animation timer has to be handled globally because of scope issues
     @Override
     public void start(Stage stage) {
         //Board initialization
@@ -43,7 +43,7 @@ public class CGoLGame extends Application {
         stage.show();
 
         //Animator
-        AnimationTimer animationTimer = new AnimationTimer() {
+        animationTimer = new AnimationTimer() {
             private long lastTime = 0;
 
             @Override
@@ -60,6 +60,7 @@ public class CGoLGame extends Application {
         //Button stuff
         buttonContainer.bStep.setOnMouseClicked(e -> {
             if (buttonContainer.bStep.isNotEnabled()) return;
+            if(gameBoard.maxGenerations != -1) gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.DISABLE);
             handleGameStep();
         }); //Step button
         buttonContainer.bLoad.setOnMouseClicked(e -> {
@@ -75,11 +76,14 @@ public class CGoLGame extends Application {
             resetGameRootChildren();
             stage.sizeToScene();
             lastLoadedFile = file;
-            if(buttonContainer.getStopVisible()) buttonStopHelper(animationTimer); //Stops the animation from happening on level load.
+            if (buttonContainer.getStopVisible()) buttonStopHelper(); //Stops the animation from happening on level load.
+            buttonContainer.bStep.setEnableState(true);
+            buttonContainer.bStart.setEnableState(true);
+            gameInfoBar.setTargetCellsLeft(gameBoard.countNumFilledCells() - gameBoard.targetNumberCells);
         });
         buttonContainer.bReset.setOnMouseClicked(e -> {
             if (buttonContainer.bReset.isNotEnabled()) return;
-            if(lastLoadedFile == null){
+            if (lastLoadedFile == null) {
                 gameBoard = new GameBoard(gameBoard.getRows(), gameBoard.getCols(), gameBoard.maxGenerations, gameBoard.targetNumberCells);
             } else {
                 gameBoard = new GameBoard(lastLoadedFile);
@@ -87,26 +91,30 @@ public class CGoLGame extends Application {
             gameInfoBar = new GameInfoBar(gameBoard.getWidth(), gameBoard.maxGenerations, gameBoard.targetNumberCells);
             resetGameRootChildren();
             stage.sizeToScene();
-            if(buttonContainer.getStopVisible()) buttonStopHelper(animationTimer); //Stops the animation from happening on level load.
+            if (buttonContainer.getStopVisible()) buttonStopHelper(); //Stops the animation from happening on level load.
+            buttonContainer.bStep.setEnableState(true);
+            buttonContainer.bStart.setEnableState(true);
+            gameInfoBar.setTargetCellsLeft(gameBoard.countNumFilledCells() - gameBoard.targetNumberCells);
         });
         buttonContainer.bStart.setOnMouseClicked(e -> {
             if (buttonContainer.bStart.isNotEnabled()) return;
-            buttonStartHelper(animationTimer);
+            buttonStartHelper();
         });
         buttonContainer.bStop.setOnMouseClicked(e -> {
             if (buttonContainer.bStop.isNotEnabled()) return;
-            buttonStopHelper(animationTimer);
+            buttonStopHelper();
         });
     }
 
-    private void buttonStopHelper(AnimationTimer animationTimer) {
+    private void buttonStopHelper() {
         animationTimer.stop();
-        gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.UNRESTRICTED);
+        if(gameBoard.maxGenerations == -1) gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.UNRESTRICTED);
+        else gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.DISABLE);
         buttonContainer.flipStartStop();
         buttonContainer.bStep.setEnableState(true);
     }
 
-    private void buttonStartHelper(AnimationTimer animationTimer) {
+    private void buttonStartHelper() {
         animationTimer.start();
         gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.DISABLE);
         buttonContainer.flipStartStop();
@@ -114,12 +122,24 @@ public class CGoLGame extends Application {
     }
 
     //Handling a gameBoard step
-    private void handleGameStep(){
-        if(gameBoard.maxGenerations == -1){ //In this mode, there's no special handling.
+    private void handleGameStep() {
+        if (gameBoard.maxGenerations == -1) { //In this mode, there's no special handling.
             gameBoard.step();
         } else {
-            if(gameInfoBar.getTargetCellsLeft() <= 0)
+            if (gameInfoBar.getTimeLeft() > 0) { //The game is still running
                 gameBoard.step();
+                gameInfoBar.setTimeLeft(gameInfoBar.getTimeLeft() - 1);
+                gameInfoBar.setTargetCellsLeft(gameBoard.countNumFilledCells() - gameBoard.targetNumberCells);
+                if(gameInfoBar.getTargetCellsLeft() <= 0){
+                    if(buttonContainer.getStopVisible()) buttonStopHelper();
+                    buttonContainer.bStep.setEnableState(false);
+                    buttonContainer.bStart.setEnableState(false);
+                }
+            } else {
+                if(buttonContainer.getStopVisible()) buttonStopHelper();
+                buttonContainer.bStep.setEnableState(false);
+                buttonContainer.bStart.setEnableState(false);
+            }
         }
     }
 
