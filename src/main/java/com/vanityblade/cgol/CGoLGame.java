@@ -4,8 +4,6 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -25,6 +23,7 @@ public class CGoLGame extends Application {
     //Top area layout
 
     AnimationTimer animationTimer; //Animation timer has to be handled globally because of scope issues
+
     @Override
     public void start(Stage stage) {
         //Board initialization
@@ -63,7 +62,7 @@ public class CGoLGame extends Application {
         //Button stuff
         buttonContainer.bStep.setOnMouseClicked(event -> {
             if (buttonContainer.bStep.isNotEnabled()) return;
-            if(gameBoard.maxGenerations != -1) gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.DISABLE);
+            if (gameBoard.maxGenerations != -1) gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.DISABLE);
             handleGameStep();
         }); //Step button
         buttonContainer.bLoad.setOnMouseClicked(event -> {
@@ -79,7 +78,8 @@ public class CGoLGame extends Application {
             resetGameRootChildren();
             stage.sizeToScene();
             lastLoadedFile = file;
-            if (buttonContainer.getStopVisible()) buttonStopHelper(); //Stops the animation from happening on level load.
+            if (buttonContainer.getStopVisible())
+                buttonStopHelper(); //Stops the animation from happening on level load.
             buttonContainer.bStep.setEnableState(true);
             buttonContainer.bStart.setEnableState(true);
             gameInfoBar.setTargetCellsLeft(gameBoard.countNumFilledCells() - gameBoard.targetNumberCells);
@@ -94,7 +94,8 @@ public class CGoLGame extends Application {
             gameInfoBar = new GameInfoBar(gameBoard.getWidth(), gameBoard.maxGenerations, gameBoard.targetNumberCells);
             resetGameRootChildren();
             stage.sizeToScene();
-            if (buttonContainer.getStopVisible()) buttonStopHelper(); //Stops the animation from happening on level load.
+            if (buttonContainer.getStopVisible())
+                buttonStopHelper(); //Stops the animation from happening on level load.
             buttonContainer.bStep.setEnableState(true);
             buttonContainer.bStart.setEnableState(true);
             gameInfoBar.setTargetCellsLeft(gameBoard.countNumFilledCells() - gameBoard.targetNumberCells);
@@ -108,35 +109,53 @@ public class CGoLGame extends Application {
             buttonStopHelper();
         });
         buttonContainer.bSave.setOnMouseClicked(event -> {
-            if(buttonContainer.bSave.isNotEnabled()) return;
+            if (buttonContainer.bSave.isNotEnabled()) return;
             FileChooser fileChooser = new FileChooser();
             fileChooser.setInitialDirectory(new File("src/main/resources/SavedGames"));
             File file = fileChooser.showSaveDialog(new Stage());
-            if(file == null) return;
+            if (file == null) return;
             TextInputDialog maxGenDialog = new TextInputDialog("-1");
             TextInputDialog targetCellDialog = new TextInputDialog("-1");
             maxGenDialog.setHeaderText("Number of turns the player has to empty the grid (0 or less for Create Mode)");
             targetCellDialog.setHeaderText("Target number of cells the player must get the board down to (must be non-negative)");
             maxGenDialog.showAndWait();
-            try{
-                if(Integer.parseInt(maxGenDialog.getResult()) <= 0) {
+            try {
+                if (Integer.parseInt(maxGenDialog.getResult()) <= 0) {
                     gameBoard.saveToFile(file, -1, -1);
                 } else {
                     targetCellDialog.showAndWait();
                     gameBoard.saveToFile(file, Integer.parseInt(maxGenDialog.getResult()), Math.max(0, Integer.parseInt(targetCellDialog.getResult())));
                 }
-            } catch(NumberFormatException e){
+            } catch (NumberFormatException exception) {
                 gameBoard.saveToFile(file, -1, -1);
             }
         });
         buttonContainer.bNew.setOnMouseClicked(event -> {
-
+            TextInputDialog wDialog = new TextInputDialog("3");
+            TextInputDialog hDialog = new TextInputDialog("3");
+            wDialog.setContentText("Board width");
+            hDialog.setContentText("Board height");
+            wDialog.showAndWait();
+            hDialog.showAndWait();
+            try {
+                gameBoard = new GameBoard(Math.max(3, Integer.parseInt(wDialog.getResult())), Math.max(3, Integer.parseInt(hDialog.getResult())), -1, -1);
+                gameInfoBar = new GameInfoBar(gameBoard.getWidth(), gameBoard.maxGenerations, gameBoard.targetNumberCells);
+                resetGameRootChildren();
+                stage.sizeToScene();
+                if (buttonContainer.getStopVisible())
+                    buttonStopHelper(); //Stops the animation from happening on level load.
+                buttonContainer.bStep.setEnableState(true);
+                buttonContainer.bStart.setEnableState(true);
+                gameInfoBar.setTargetCellsLeft(gameBoard.countNumFilledCells() - gameBoard.targetNumberCells);
+            } catch (NumberFormatException ignored) {
+            }
         });
     }
 
     private void buttonStopHelper() {
         animationTimer.stop();
-        if(gameBoard.maxGenerations == -1) gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.UNRESTRICTED);
+        if (gameBoard.maxGenerations == -1)
+            gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.UNRESTRICTED);
         else gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.DISABLE);
         buttonContainer.flipStartStop();
         buttonContainer.bStep.setEnableState(true);
@@ -158,13 +177,13 @@ public class CGoLGame extends Application {
                 gameBoard.step();
                 gameInfoBar.setTimeLeft(gameInfoBar.getTimeLeft() - 1);
                 gameInfoBar.setTargetCellsLeft(gameBoard.countNumFilledCells() - gameBoard.targetNumberCells);
-                if(gameInfoBar.getTargetCellsLeft() <= 0){
-                    if(buttonContainer.getStopVisible()) buttonStopHelper();
+                if (gameInfoBar.getTargetCellsLeft() <= 0) {
+                    if (buttonContainer.getStopVisible()) buttonStopHelper();
                     buttonContainer.bStep.setEnableState(false);
                     buttonContainer.bStart.setEnableState(false);
                 }
             } else {
-                if(buttonContainer.getStopVisible()) buttonStopHelper();
+                if (buttonContainer.getStopVisible()) buttonStopHelper();
                 buttonContainer.bStep.setEnableState(false);
                 buttonContainer.bStart.setEnableState(false);
             }
