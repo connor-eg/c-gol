@@ -51,7 +51,7 @@ public class CGoLGame extends Application {
                 long timeSinceLastUpdate = l - lastTime;
                 if (timeSinceLastUpdate > 330000000L) {
                     lastTime = l;
-                    gameBoard.step();
+                    handleGameStep();
                 }
             }
         };
@@ -60,7 +60,7 @@ public class CGoLGame extends Application {
         //Button stuff
         buttonContainer.bStep.setOnMouseClicked(e -> {
             if (buttonContainer.bStep.isNotEnabled()) return;
-            gameBoard.step();
+            handleGameStep();
         }); //Step button
         buttonContainer.bLoad.setOnMouseClicked(e -> {
             if (buttonContainer.bLoad.isNotEnabled()) return;
@@ -113,9 +113,18 @@ public class CGoLGame extends Application {
         buttonContainer.bStep.setEnableState(false);
     }
 
+    //Handling a gameBoard step
+    private void handleGameStep(){
+        if(gameBoard.maxGenerations == -1){ //In this mode, there's no special handling.
+            gameBoard.step();
+        } else {
+            if(gameInfoBar.getTargetCellsLeft() <= 0)
+                gameBoard.step();
+        }
+    }
 
     //Required after creating a new instance of one of the contained views (i.e. after loading a new board)
-    public void resetGameRootChildren() {
+    private void resetGameRootChildren() {
         gameRoot.getChildren().clear();
         gameRoot.getChildren().addAll(gameInfoBar, gameBoard, buttonContainer);
         buttonContainer.relocateButtons(Math.max(256, gameBoard.getWidth()));

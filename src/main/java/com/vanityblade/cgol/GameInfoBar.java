@@ -22,9 +22,21 @@ public class GameInfoBar extends Canvas {
     //Renders the current state of the info bar
     public void render() {
         drawBG();
-        drawIcons();
-        drawNumber(32, Math.max(0, timeLeft));
-        drawNumber(-32, Math.max(0, targetCellsLeft));
+        if(targetCellsLeft == -1 && timeLeft == -1){ //There is no objective, draw the CreateMode banner
+            drawInCenter("cgol_createModeBanner.png");
+        } else { //There is an objective, don't draw the banner
+            drawIcons();
+            drawNumber(32, Math.max(0, timeLeft));
+            drawNumber(-32, Math.max(0, targetCellsLeft));
+            //Game-ending conditions
+            if(timeLeft == 0) {
+                if(targetCellsLeft <= 0){ //Win
+                    drawInCenter("cgol_winIcon.png");
+                } else { //Lose
+                    drawInCenter("cgol_loseIcon.png");
+                }
+            }
+        }
     }
 
     //This renders a background image and tiles it such that a continuous image is created.
@@ -59,6 +71,19 @@ public class GameInfoBar extends Canvas {
         g.drawImage(icons, 0, 0, 32, 32, 0, 0, 32, 32);
         //Right icon is a target for the number of remaining cells to be cleared
         g.drawImage(icons, 32, 0, 32, 32, getWidth() - 33, 0, 32, 32);
+    }
+
+    private void drawInCenter(String filename){
+        GraphicsContext g = getGraphicsContext2D();
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = new FileInputStream("src/main/resources/ImageAssets/" + filename);
+        } catch (FileNotFoundException e) {
+            fileInputStream = null;
+        }
+        assert fileInputStream != null;
+        Image img = new Image(fileInputStream);
+        g.drawImage(img, 0, 0, img.getWidth(), img.getHeight(), (getWidth() / 2) - (img.getWidth() / 2), img.getHeight()/2, img.getWidth(), img.getHeight());
     }
 
     /**
