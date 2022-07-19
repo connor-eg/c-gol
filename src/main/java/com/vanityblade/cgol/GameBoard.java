@@ -78,7 +78,7 @@ public class GameBoard extends Canvas {
                     board[x][y] = new GameCell(newCellState);
                 }
             }
-            clickPlacementMode = CLICK_PLACEMENT_MODE.RESTRICTED;
+            clickPlacementMode = maxGenerations == -1? CLICK_PLACEMENT_MODE.UNRESTRICTED : CLICK_PLACEMENT_MODE.RESTRICTED;
 
             super.setHeight(cols * 16 + 2);
             super.setWidth(rows * 16 + 2);
