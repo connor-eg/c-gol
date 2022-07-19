@@ -4,6 +4,9 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -58,12 +61,12 @@ public class CGoLGame extends Application {
 
         /* Event handlers */
         //Button stuff
-        buttonContainer.bStep.setOnMouseClicked(e -> {
+        buttonContainer.bStep.setOnMouseClicked(event -> {
             if (buttonContainer.bStep.isNotEnabled()) return;
             if(gameBoard.maxGenerations != -1) gameBoard.setClickPlacementMode(GameBoard.CLICK_PLACEMENT_MODE.DISABLE);
             handleGameStep();
         }); //Step button
-        buttonContainer.bLoad.setOnMouseClicked(e -> {
+        buttonContainer.bLoad.setOnMouseClicked(event -> {
             if (buttonContainer.bLoad.isNotEnabled()) return;
             FileChooser fileChooser = new FileChooser();
             fileChooser.setInitialDirectory(new File("src/main/resources/SavedGames"));
@@ -81,7 +84,7 @@ public class CGoLGame extends Application {
             buttonContainer.bStart.setEnableState(true);
             gameInfoBar.setTargetCellsLeft(gameBoard.countNumFilledCells() - gameBoard.targetNumberCells);
         });
-        buttonContainer.bReset.setOnMouseClicked(e -> {
+        buttonContainer.bReset.setOnMouseClicked(event -> {
             if (buttonContainer.bReset.isNotEnabled()) return;
             if (lastLoadedFile == null) {
                 gameBoard = new GameBoard(gameBoard.getRows(), gameBoard.getCols(), gameBoard.maxGenerations, gameBoard.targetNumberCells);
@@ -96,20 +99,35 @@ public class CGoLGame extends Application {
             buttonContainer.bStart.setEnableState(true);
             gameInfoBar.setTargetCellsLeft(gameBoard.countNumFilledCells() - gameBoard.targetNumberCells);
         });
-        buttonContainer.bStart.setOnMouseClicked(e -> {
+        buttonContainer.bStart.setOnMouseClicked(event -> {
             if (buttonContainer.bStart.isNotEnabled()) return;
             buttonStartHelper();
         });
-        buttonContainer.bStop.setOnMouseClicked(e -> {
+        buttonContainer.bStop.setOnMouseClicked(event -> {
             if (buttonContainer.bStop.isNotEnabled()) return;
             buttonStopHelper();
         });
-        buttonContainer.bSave.setOnMouseClicked(e -> {
+        buttonContainer.bSave.setOnMouseClicked(event -> {
             if(buttonContainer.bSave.isNotEnabled()) return;
             FileChooser fileChooser = new FileChooser();
             fileChooser.setInitialDirectory(new File("src/main/resources/SavedGames"));
             File file = fileChooser.showSaveDialog(new Stage());
-            if(file != null) gameBoard.saveToFile(file, -1, -1);
+            if(file == null) return;
+            TextInputDialog maxGenDialog = new TextInputDialog("-1");
+            TextInputDialog targetCellDialog = new TextInputDialog("-1");
+            maxGenDialog.setHeaderText("Number of turns the player has to empty the grid (0 or less for Create Mode)");
+            targetCellDialog.setHeaderText("Target number of cells the player must get the board down to (must be non-negative)");
+            maxGenDialog.showAndWait();
+            try{
+                if(Integer.parseInt(maxGenDialog.getResult()) <= 0) {
+                    gameBoard.saveToFile(file, -1, -1);
+                } else {
+                    targetCellDialog.showAndWait();
+                    gameBoard.saveToFile(file, Integer.parseInt(maxGenDialog.getResult()), Math.max(0, Integer.parseInt(targetCellDialog.getResult())));
+                }
+            } catch(NumberFormatException e){
+                gameBoard.saveToFile(file, -1, -1);
+            }
         });
     }
 

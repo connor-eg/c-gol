@@ -240,9 +240,10 @@ public class GameBoard extends Canvas {
          */
         target.setState(switch (target.getState()) {
             case UNFILLED, SOON_FILLED -> STATES.PLACED; //Empty squares are replaced with filled squares
-            case PLACED -> STATES.UNFILLED; //Placed squares can always be unfilled
+            case PLACED -> //Placed squares can always be unfilled
+                    clickPlacementMode == CLICK_PLACEMENT_MODE.UNRESTRICTED ? STATES.NO_GO : STATES.UNFILLED;
             case NO_GO -> //These squares block players from placing a cell (while in restricted placement)
-                    clickPlacementMode == CLICK_PLACEMENT_MODE.UNRESTRICTED ? STATES.FILLED : STATES.NO_GO;
+                    clickPlacementMode == CLICK_PLACEMENT_MODE.UNRESTRICTED ? STATES.UNFILLED : STATES.NO_GO;
             case FILLED, SOON_UNFILLED -> //These squares are considered "filled" and follow placement rules
                     clickPlacementMode == CLICK_PLACEMENT_MODE.UNRESTRICTED ? STATES.UNFILLED : STATES.FILLED;
         });
