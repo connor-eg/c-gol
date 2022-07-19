@@ -66,7 +66,7 @@ public class CGoLGame extends Application {
         buttonContainer.bLoad.setOnMouseClicked(e -> {
             if (buttonContainer.bLoad.isNotEnabled()) return;
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialDirectory(new File("src/main/resources/FileResources"));
+            fileChooser.setInitialDirectory(new File("src/main/resources/SavedGames"));
             File file = fileChooser.showOpenDialog(new Stage());
 
             if (file == null) return; //If the user clicks cancel or the file has incorrect permissions nothing happens.
@@ -103,6 +103,13 @@ public class CGoLGame extends Application {
         buttonContainer.bStop.setOnMouseClicked(e -> {
             if (buttonContainer.bStop.isNotEnabled()) return;
             buttonStopHelper();
+        });
+        buttonContainer.bSave.setOnMouseClicked(e -> {
+            if(buttonContainer.bSave.isNotEnabled()) return;
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialDirectory(new File("src/main/resources/SavedGames"));
+            File file = fileChooser.showSaveDialog(new Stage());
+            if(file != null) gameBoard.saveToFile(file, -1, -1);
         });
     }
 

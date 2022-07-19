@@ -67,10 +67,10 @@ public class GameBoard extends Canvas {
             maxGenerations = Integer.parseInt(reader.readLine());
             targetNumberCells = Integer.parseInt(reader.readLine());
             board = new GameCell[rows][cols];
-            for(int y = 0; y < cols; y++){
+            for (int y = 0; y < cols; y++) {
                 String currentRow = reader.readLine();
-                for(int x = 0; x < rows; x++){
-                    STATES newCellState = switch(Integer.parseInt(currentRow.substring(x,x+1))){
+                for (int x = 0; x < rows; x++) {
+                    STATES newCellState = switch (Integer.parseInt(currentRow.substring(x, x + 1))) {
                         case 0 -> STATES.UNFILLED;
                         case 1 -> STATES.FILLED;
                         default -> STATES.NO_GO;
@@ -148,8 +148,7 @@ public class GameBoard extends Canvas {
                     //No-go and placed have to be updated separately because their states are ambiguous.
                     case PLACED ->
                             countNeighbors(x, y) == 2 || countNeighbors(x, y) == 3 ? STATES.FILLED : STATES.UNFILLED;
-                    case NO_GO ->
-                            countNeighbors(x, y) == 3 ? STATES.FILLED : STATES.UNFILLED;
+                    case NO_GO -> countNeighbors(x, y) == 3 ? STATES.FILLED : STATES.UNFILLED;
                 };
                 cell.setState(state);
                 newBoard[x][y] = cell;
@@ -208,12 +207,12 @@ public class GameBoard extends Canvas {
     }
 
     //Returns the number of cells in the board that are filled.
-    public int countNumFilledCells(){
+    public int countNumFilledCells() {
         int count = 0;
-        for(int x = 0; x < rows; x++){
-            for(int y = 0; y < cols; y++){
-                STATES temp = getCell(x,y).getState();
-                if(temp == STATES.FILLED || temp == STATES.SOON_UNFILLED || temp == STATES.PLACED) count++;
+        for (int x = 0; x < rows; x++) {
+            for (int y = 0; y < cols; y++) {
+                STATES temp = getCell(x, y).getState();
+                if (temp == STATES.FILLED || temp == STATES.SOON_UNFILLED || temp == STATES.PLACED) count++;
             }
         }
         return count;
@@ -249,6 +248,29 @@ public class GameBoard extends Canvas {
         });
         show();
     }
+
+    public void saveToFile(File f, int maxGens, int targetCells) {
+        FileWriter fw;
+        try {
+            fw = new FileWriter(f);
+            fw.write(String.format("%d\n%d\n%d\n%d\n", rows, cols, maxGens, targetCells));
+            for (int y = 0; y < cols; y++) {
+                for (int x = 0; x < rows; x++) {
+                    switch (getCell(x, y).getState()) {
+                        case UNFILLED, SOON_FILLED -> fw.write('0');
+                        case FILLED, PLACED, SOON_UNFILLED -> fw.write('1');
+                        case NO_GO -> fw.write('2');
+                    }
+                }
+                fw.write('\n');
+            }
+            fw.flush();
+            fw.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public int getRows() {
         return rows;
     }

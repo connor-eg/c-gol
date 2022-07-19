@@ -22,7 +22,7 @@ public class GameInfoBar extends Canvas {
     //Renders the current state of the info bar
     public void render() {
         drawBG();
-        if (targetCellsLeft == -1 && timeLeft == -1) { //There is no objective, draw the CreateMode banner
+        if (timeLeft == -1) { //There is no objective, draw the CreateMode banner
             drawInCenter("cgol_createModeBanner.png");
         } else { //There is an objective, don't draw the banner
             drawIcons();
