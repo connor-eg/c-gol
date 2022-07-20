@@ -6,20 +6,9 @@ Competitive Game of Life (the acronym is pronounced "seagull")
   - The game starts with a number of cells pre-filled
   - Your objective is to place your cells such that after a number of simulation steps the number of filled cells is less than some threshold.
 
-### Completed so far:
-  - Game logic to handle state transitions
-  - Display logic
-  - Player interaction
-  - Custom number display to be used later
-  - Animation timer (the game can now "run" without having to mash a button)
-
-### To-do (roughly in order from top to bottom):
-  - Add in counters for...
-    - The number of remaining generations
-    - The target number of cells on the board
-    - The current number of cells on the board
-  - Create save states (so players can make boards and play on them)
-  - Add game modes (unsure exactly what this means yet; distant to-do goal)
+### The game modes:
+  - Create Mode: This is the mode the game is loaded into by default. You can place cells and step through the simulation freely.
+  - Objective Mode: If a game board that was loaded has its objectives set, then this mode will be entered. In Objective Mode, you can only place cells before the first time the board updates. After that point, you will no longer be able to modify the board.
 
 ### How to run this game from IntelliJ IDEA:
   - You must have JavaFX installed, I believe that comes with IDEA.
