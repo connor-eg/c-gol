@@ -149,6 +149,7 @@ public class CGoLGame extends Application {
                 gameInfoBar.setTargetCellsLeft(gameBoard.countNumFilledCells() - gameBoard.targetNumberCells);
             } catch (NumberFormatException ignored) {
             }
+            lastLoadedFile = null;
         });
     }
 
