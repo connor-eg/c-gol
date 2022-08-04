@@ -116,8 +116,12 @@ public class CGoLGame extends Application {
             if (file == null) return;
             TextInputDialog maxGenDialog = new TextInputDialog("-1");
             TextInputDialog targetCellDialog = new TextInputDialog("-1");
-            maxGenDialog.setHeaderText("Number of turns the player has to empty the grid (0 or less for Create Mode)");
-            targetCellDialog.setHeaderText("Target number of cells the player must get the board down to (must be non-negative)");
+            maxGenDialog.setTitle("Saved game objective information");
+            maxGenDialog.setContentText("Number of turns the player has to empty the grid\n(0 or less for Create Mode)\n");
+            maxGenDialog.setHeaderText(null);
+            targetCellDialog.setTitle("Saved game objective information");
+            targetCellDialog.setContentText("Target number of cells the player must get the board down to\n(must be non-negative)\n");
+            targetCellDialog.setHeaderText(null);
             maxGenDialog.showAndWait();
             try {
                 if (Integer.parseInt(maxGenDialog.getResult()) <= 0) {
@@ -134,7 +138,11 @@ public class CGoLGame extends Application {
             TextInputDialog wDialog = new TextInputDialog("3");
             TextInputDialog hDialog = new TextInputDialog("3");
             wDialog.setContentText("Board width");
+            wDialog.setTitle("New board information");
+            wDialog.setHeaderText(null);
             hDialog.setContentText("Board height");
+            hDialog.setTitle("New board information");
+            hDialog.setHeaderText(null);
             wDialog.showAndWait();
             hDialog.showAndWait();
             try {
